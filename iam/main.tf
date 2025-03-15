@@ -34,13 +34,13 @@ module "aws_load_balancer_controller_irsa_role" {
 
 # Create the policy using the HTTP data source to fetch the policy JSON
 data "http" "load_balancer_controller_policy" {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json"
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json"
 
-  # Optional: Add request headers
   request_headers = {
     Accept = "application/json"
   }
 }
+
 
 # Create the AWS Load Balancer Controller IAM Policy from the fetched document
 resource "aws_iam_policy" "load_balancer_controller" {
