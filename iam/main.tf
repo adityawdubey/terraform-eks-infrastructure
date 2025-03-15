@@ -22,7 +22,7 @@ module "aws_load_balancer_controller_irsa_role" {
 
   role_name = "${var.cluster_name}-aws-load-balancer-controller"
 
-  attach_load_balancer_controller_policy = true
+  attach_load_balancer_controller_policy = false # Disable default policy attachment
 
   oidc_providers = {
     ex = {
@@ -30,5 +30,27 @@ module "aws_load_balancer_controller_irsa_role" {
       namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
     }
   }
+}
 
+# Create the policy using the HTTP data source to fetch the policy JSON
+data "http" "load_balancer_controller_policy" {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json"
+
+  # Optional: Add request headers
+  request_headers = {
+    Accept = "application/json"
+  }
+}
+
+# Create the AWS Load Balancer Controller IAM Policy from the fetched document
+resource "aws_iam_policy" "load_balancer_controller" {
+  name        = "AWSLoadBalancerControllerIAMPolicy"
+  description = "Policy for AWS Load Balancer Controller"
+  policy      = data.http.load_balancer_controller_policy.response_body
+}
+
+# Attach the created policy to the role
+resource "aws_iam_role_policy_attachment" "load_balancer_controller" {
+  role       = module.aws_load_balancer_controller_irsa_role.iam_role_name
+  policy_arn = aws_iam_policy.load_balancer_controller.arn
 }
