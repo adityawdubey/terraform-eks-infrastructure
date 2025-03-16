@@ -11,9 +11,8 @@ module "ebs_csi_irsa_role" {
       namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
     }
   }
-  
-
 }
+
 
 # IAM Role for Load Balancer Controller
 module "aws_load_balancer_controller_irsa_role" {
@@ -40,7 +39,6 @@ data "http" "load_balancer_controller_policy" {
     Accept = "application/json"
   }
 }
-
 
 # Create the AWS Load Balancer Controller IAM Policy from the fetched document
 resource "aws_iam_policy" "load_balancer_controller" {
