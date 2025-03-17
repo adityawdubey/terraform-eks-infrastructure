@@ -118,10 +118,8 @@ kubectl get nodes
 
 ## References
 
-- Amazon EKS Documentation
-- Terraform AWS Provider Documentation
-- Kubernetes Documentation
-- AWS Well-Architected Framework
+- [Amazon EKS Documentation](https://docs.aws.amazon.com/eks/)
+- https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 
 ## Contributing
 
