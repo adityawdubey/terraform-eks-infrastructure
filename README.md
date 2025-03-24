@@ -2,6 +2,8 @@
 
 A Terraform-based IaC that provisions an Amazon EKS cluster on AWS with VPC, subnets, managed node groups, and add-ons (AWS Load Balancer Controller &amp; Amazon EBS CSI Driver) using IRSA and Kubernetes RBAC best practices.
 
+blog: https://adityadubey.tech/deploying-an-amazon-eks-cluster-with-terraform
+
 ## Table of Contents
 
 - [Architecture](#architecture)
