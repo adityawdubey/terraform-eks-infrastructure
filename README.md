@@ -31,7 +31,7 @@ The infrastructure follows a resilient, secure, and highly available design span
 
 ## Technologies Used
 
-- **Terraform:** v1.3.0+
+- **Terraform:** v1.11.3+
 - **AWS ~> 5.0:** EKS, VPC, IAM
 - **Kubernetes:** v2.0+
 
