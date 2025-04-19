@@ -1,4 +1,4 @@
-name: Terraform CI/CD
+name: EKS Infra Dev Deployment
 
 on:
   push:
