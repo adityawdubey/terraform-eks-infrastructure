@@ -38,10 +38,12 @@ The infrastructure follows a resilient, secure, and highly available design span
 ## Features
 
 - Automated provisioning of an EKS cluster with VPC, subnets, and managed node groups
-- Integration of AWS Load Balancer Controller and Amazon EBS CSI Driver using IRSA
+- A highly available Multi-AZ VPC with public/private subnets and NAT gateways
+- Integration of critical EKS add-ons: CoreDNS, kube-proxy, AWS VPC CNI, and EBS CSI Driver
 - Kubernetes RBAC best practices for secure access control
 - Automated deployment of add-ons with proper IAM permissions
-- High availability configuration across multiple availability zones
+- Deployed the AWS Load Balancer Controller with full Ingress support
+- Configured DNS + ALB Ingress to expose workloads securely
 
 
 ## Setup and Deployment
