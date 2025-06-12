@@ -7,11 +7,13 @@ for Kubernetes services and ingresses
 
 # Deploy AWS Load Balancer Controller using Helm
 resource "helm_release" "aws_load_balancer_controller" {
-  name = "aws-load-balancer-controller"
+  name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
   namespace  = "kube-system"
   version    = "1.4.3"
+
+  depends_on = var.eks_depends_on == null ? [] : [var.eks_depends_on]
 
 
   set {
@@ -21,7 +23,7 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   set {
     name  = "clusterName"
-    value = "eks-cluster"
+    value = var.cluster_id
   }
 
   set {
