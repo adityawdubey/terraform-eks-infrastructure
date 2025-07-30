@@ -21,5 +21,4 @@ variable "aws_region" {
 variable "eks_depends_on" {
   description = "Dependencies for the EKS module"
   type        = any
-  default     = null
 }

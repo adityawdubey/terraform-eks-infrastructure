@@ -13,7 +13,7 @@ resource "helm_release" "aws_load_balancer_controller" {
   namespace  = "kube-system"
   version    = "1.4.3"
 
-  depends_on = var.eks_depends_on == null ? [] : [var.eks_depends_on]
+  depends_on = [var.eks_depends_on]
 
 
   set {
