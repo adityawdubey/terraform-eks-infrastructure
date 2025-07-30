@@ -42,7 +42,7 @@ data "http" "load_balancer_controller_policy" {
 
 # Create the AWS Load Balancer Controller IAM Policy from the fetched document
 resource "aws_iam_policy" "load_balancer_controller" {
-  name        = "AWSLoadBalancerControllerIAMPolicy"
+  name        = "${var.cluster_name}-AWSLoadBalancerControllerIAMPolicy"
   description = "Policy for AWS Load Balancer Controller"
   policy      = data.http.load_balancer_controller_policy.response_body
 }
