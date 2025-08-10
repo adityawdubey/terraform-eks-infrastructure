@@ -30,3 +30,11 @@ module "load_balancer_controller" {
   aws_region                             = var.aws_region
   eks_depends_on                         = module.eks
 }
+
+# Cluster Autoscaler
+module "cluster_autoscaler" {
+  source         = "./cluster_autoscaler"
+  cluster_name   = var.cluster_name
+  aws_region     = var.aws_region
+  eks_depends_on = module.eks
+}
