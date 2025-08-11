@@ -27,6 +27,9 @@ module "eks" {
       service_account_role_arn = var.ebs_csi_irsa_role_arn
       most_recent = true
     }
+    eks-pod-identity-agent = {
+      most_recent = true
+    }
   }
 
   vpc_id                   = var.vpc_id
@@ -53,6 +56,12 @@ module "eks" {
 
       instance_types = ["t3.medium"]
       capacity_type  = "ON_DEMAND"
+
+      # Tags for Cluster Autoscaler auto-discovery
+      tags = {
+        "k8s.io/cluster-autoscaler/enabled" = "true"
+        "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+      }
     }
   }
 
