@@ -44,6 +44,7 @@ The infrastructure follows a resilient, secure, and highly available design span
 - Automated deployment of add-ons with proper IAM permissions
 - Deployed the AWS Load Balancer Controller with full Ingress support
 - Configured DNS + ALB Ingress to expose workloads securely
+- Cluster Autoscaler for automatic scaling of EKS node groups based on pod resource demands
 
 
 ## Setup and Deployment
