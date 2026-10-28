@@ -42,3 +42,8 @@ variable "node_max_size" {
   type        = number
   description = "Maximum number of worker nodes."
 }
+
+variable "cluster_admin_principal_arns" {
+  type        = list(string)
+  description = "IAM principal ARNs granted cluster admin access, in addition to the cluster creator."
+}

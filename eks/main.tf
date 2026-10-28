@@ -71,6 +71,18 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
+  access_entries = {
+    for arn in var.cluster_admin_principal_arns : arn => {
+      principal_arn = arn
+      policy_associations = {
+        admin = {
+          policy_arn   = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = { type = "cluster" }
+        }
+      }
+    }
+  }
+
   # access_entries = {
   #   # One access entry with a policy associated
   #   super-admin = {

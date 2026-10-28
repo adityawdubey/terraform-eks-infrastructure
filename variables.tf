@@ -53,3 +53,9 @@ variable "node_max_size" {
   type        = number
   default     = 4
 }
+
+variable "cluster_admin_principal_arns" {
+  description = "IAM principal ARNs granted cluster admin access in addition to the identity running Terraform (do not include that identity)"
+  type        = list(string)
+  default     = []
+}

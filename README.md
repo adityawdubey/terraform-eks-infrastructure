@@ -107,7 +107,7 @@ aws s3api put-public-access-block --bucket "$TF_STATE_BUCKET" \
 > - **Do not let CI create a missing bucket.** A new bucket means an empty state, and Terraform would try to recreate infrastructure that already exists. If the bucket is missing, CI should fail.
 > - **Do not delete the bucket or its versions** while any infrastructure managed by this state still exists.
 
-The bucket name is not stored in this repository. Pass it to `terraform init` (locally) or set the `TF_STATE_BUCKET` GitHub Actions variable (CI, see [.github/workflows/README.md](.github/workflows/README.md)).
+Pass the bucket name to `terraform init` when running locally. CI reads it from `environments/main/backend.s3.tfbackend` (see [.github/workflows/README.md](.github/workflows/README.md)).
 
 ### Deployment
 

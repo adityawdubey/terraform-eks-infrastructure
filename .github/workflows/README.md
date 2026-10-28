@@ -1,26 +1,23 @@
-# GitHub Secrets and Variables (main Environment)
+# CI/CD Setup (main Environment)
 
-This guide explains how to set up the required secrets and variables for the Terraform CI/CD workflow in the main environment.
+This guide explains how to set up the Terraform CI/CD workflow for the main environment.
 
-## Environment Variables Setup
+## Configuration
+
+Non-secret settings are committed to the repository, not stored in GitHub:
+
+- `environments/main/terraform.tfvars`: region, VPC name, cluster name, availability zones and cluster admins (`cluster_admin_principal_arns`)
+- `environments/main/backend.s3.tfbackend`: the existing Terraform state bucket (see [Create the Terraform state bucket](../../README.md#create-the-terraform-state-bucket-one-time))
+- `main.yml` (`env`): Terraform version and AWS region
+
+Change these through a commit to `main`. Changing `cluster_name` replaces the cluster.
+
+## Secrets Setup
 
 1. Go to your GitHub repository
 2. Navigate to Settings > Environments
 3. Click on "main" environment (create it if it doesn't exist)
-4. Click "Add variable" and add the following variables:
-
-### Required Variables
-
-- AWS_REGION = ap-south-1
-- TF_VERSION
-- VPC_NAME 
-- CLUSTER_NAME 
-- TF_STATE_BUCKET = name of the existing Terraform state bucket (see [Create the Terraform state bucket](../../README.md#create-the-terraform-state-bucket-one-time))
-
-## Secrets Setup
-
-1. In the same "main" environment settings
-2. Click "Add secret" and add the following secrets:
+4. Click "Add secret" and add the following secret:
 
 ### Required Secrets
 
@@ -41,10 +38,8 @@ Every push to `main` runs `terraform apply`. In the "main" environment settings:
 
 ## Security Notes
 
-- Variables are visible in workflow logs
 - Secrets are encrypted and not visible in logs
-- Use secrets for sensitive information like credentials
-- Use variables for non-sensitive configuration values
+- Keep only credentials in GitHub; commit non-secret settings under `environments/`
 
 ## Verification
 
@@ -57,7 +52,7 @@ To verify your setup:
 ## Troubleshooting
 
 If the workflow fails:
-1. Check if all required variables and secrets are set
-2. Verify the values are correct
+1. Check that the `AWS_ROLE_ARN` secret is set in the "main" environment
+2. Verify the values in `environments/main/` are correct
 3. Check the workflow logs for specific error messages
 4. Ensure the AWS role has the necessary permissions

@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
 
+env:
+  TF_VERSION: 1.17.1
+  AWS_REGION: ap-south-1
+  ENV_DIR: environments/main
+
 jobs:
   terraform:
     name: "Terraform"
@@ -21,19 +26,12 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
         with:
-          terraform_version: ${{ vars.TF_VERSION }}
-
-      - name: Create terraform.tfvars
-        run: |
-          echo 'aws_region = "${{ vars.AWS_REGION }}"' > terraform.tfvars
-          echo 'vpc_name = "${{ vars.VPC_NAME }}"' >> terraform.tfvars
-          echo 'cluster_name = "${{ vars.CLUSTER_NAME }}"' >> terraform.tfvars
-          echo 'azs = ["${{ vars.AWS_REGION }}a", "${{ vars.AWS_REGION }}b", "${{ vars.AWS_REGION }}c"]' >> terraform.tfvars
+          terraform_version: ${{ env.TF_VERSION }}
 
       - name: Terraform Format
         id: fmt
@@ -42,7 +40,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
+        run: terraform init -backend-config="$ENV_DIR/backend.s3.tfbackend"
 
       - name: Terraform Validate
         id: validate
@@ -50,7 +48,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -out=tfplan
+        run: terraform plan -no-color -var-file="$ENV_DIR/terraform.tfvars" -out=tfplan
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan 

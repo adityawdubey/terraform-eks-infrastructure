@@ -18,3 +18,6 @@ cluster_name = "eks-cluster"
 # node_desired_size   = 2
 # node_min_size       = 2
 # node_max_size       = 4
+
+# IAM principals that get cluster admin access, besides the identity running Terraform (do not include that identity)
+# cluster_admin_principal_arns = ["arn:aws:iam::<account-id>:role/<admin-role>"]
