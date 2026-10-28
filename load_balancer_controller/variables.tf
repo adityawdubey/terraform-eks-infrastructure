@@ -1,15 +1,15 @@
-variable "cluster_id" {
-  type = string
-  description = "The ID of the EKS cluster"
+variable "cluster_name" {
+  type        = string
+  description = "The name of the EKS cluster"
 }
 
 variable "load_balancer_controller_irsa_role_arn" {
-  type = string
+  type        = string
   description = "The ARN of the IAM role for the Load Balancer Controller"
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "The ID of the VPC"
 }
 

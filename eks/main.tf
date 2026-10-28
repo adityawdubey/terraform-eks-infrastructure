@@ -3,7 +3,7 @@ module "eks" {
   version = "~> 20.0"
 
   cluster_name    = var.cluster_name
-  cluster_version = "1.31"
+  cluster_version = var.kubernetes_version
 
   enable_irsa = true
 
@@ -25,20 +25,25 @@ module "eks" {
     }
     aws-ebs-csi-driver = {
       service_account_role_arn = var.ebs_csi_irsa_role_arn
-      most_recent = true
+      most_recent              = true
+      # Newer EKS versions ship no default StorageClass; create a gp3 default
+      configuration_values = jsonencode({
+        defaultStorageClass = { enabled = true }
+      })
     }
     eks-pod-identity-agent = {
       most_recent = true
     }
   }
 
-  vpc_id                   = var.vpc_id
-  subnet_ids               = var.subnet_ids
-  
+  vpc_id     = var.vpc_id
+  subnet_ids = var.subnet_ids
+
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
-    instance_types =  ["m5.large", "t3.medium"]
+    ami_type       = "AL2023_x86_64_STANDARD"
+    instance_types = var.node_instance_types
 
     iam_role_additional_policies = {
       AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
@@ -50,22 +55,33 @@ module "eks" {
   eks_managed_node_groups = {
 
     general = {
-      desired_size = 3
-      min_size     = 1
-      max_size     = 10
+      desired_size = var.node_desired_size
+      min_size     = var.node_min_size
+      max_size     = var.node_max_size
 
-      instance_types = ["t3.medium"]
-      capacity_type  = "ON_DEMAND"
+      capacity_type = "ON_DEMAND"
 
       # Tags for Cluster Autoscaler auto-discovery
       tags = {
-        "k8s.io/cluster-autoscaler/enabled" = "true"
+        "k8s.io/cluster-autoscaler/enabled"             = "true"
         "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
       }
     }
   }
 
   enable_cluster_creator_admin_permissions = true
+
+  access_entries = {
+    for arn in var.cluster_admin_principal_arns : arn => {
+      principal_arn = arn
+      policy_associations = {
+        admin = {
+          policy_arn   = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = { type = "cluster" }
+        }
+      }
+    }
+  }
 
   # access_entries = {
   #   # One access entry with a policy associated
@@ -87,6 +103,6 @@ module "eks" {
   tags = {
     env       = "dev"
     terraform = "true"
-    }
+  }
 }
 

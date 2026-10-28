@@ -6,7 +6,7 @@ resource "aws_iam_role" "cluster_autoscaler" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid = "AllowEksAuthToAssumeRoleForPodIdentity"
+        Sid    = "AllowEksAuthToAssumeRoleForPodIdentity"
         Effect = "Allow"
         Principal = {
           Service = "pods.eks.amazonaws.com"
@@ -25,17 +25,52 @@ resource "aws_iam_role" "cluster_autoscaler" {
   }
 }
 
-# Attach Cluster Autoscaler Policy
-resource "aws_iam_role_policy_attachment" "cluster_autoscaler" {
-  policy_arn = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
-  role       = aws_iam_role.cluster_autoscaler.name
+# Least-privilege policy recommended by the Cluster Autoscaler AWS docs
+resource "aws_iam_role_policy" "cluster_autoscaler" {
+  name = "cluster-autoscaler"
+  role = aws_iam_role.cluster_autoscaler.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:DescribeAutoScalingGroups",
+          "autoscaling:DescribeAutoScalingInstances",
+          "autoscaling:DescribeLaunchConfigurations",
+          "autoscaling:DescribeScalingActivities",
+          "autoscaling:DescribeTags",
+          "ec2:DescribeImages",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:GetInstanceTypesFromInstanceRequirements",
+          "eks:DescribeNodegroup"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:SetDesiredCapacity",
+          "autoscaling:TerminateInstanceInAutoScalingGroup"
+        ]
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "aws:ResourceTag/k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+          }
+        }
+      }
+    ]
+  })
 }
 
 # Pod Identity Association for Cluster Autoscaler
 resource "aws_eks_pod_identity_association" "cluster_autoscaler" {
   cluster_name    = var.cluster_name
   namespace       = "kube-system"
-  service_account = "cluster-autoscaler-aws-cluster-autoscaler"  # Helm's default name
+  service_account = "cluster-autoscaler-aws-cluster-autoscaler" # Helm's default name
   role_arn        = aws_iam_role.cluster_autoscaler.arn
 }
 
@@ -45,7 +80,7 @@ resource "helm_release" "cluster_autoscaler" {
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
   namespace  = "kube-system"
-  version    = "9.37.0"
+  version    = "9.59.0"
 
   set {
     name  = "autoDiscovery.clusterName"

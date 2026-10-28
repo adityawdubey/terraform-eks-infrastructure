@@ -1,6 +1,7 @@
 # IAM Role for EBS CSI
 module "ebs_csi_irsa_role" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.0"
 
   role_name             = "${var.cluster_name}-ebs-csi"
   attach_ebs_csi_policy = true
@@ -33,7 +34,7 @@ module "aws_load_balancer_controller_irsa_role" {
 
 # Create the policy using the HTTP data source to fetch the policy JSON
 data "http" "load_balancer_controller_policy" {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json"
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/install/iam_policy.json"
 
   request_headers = {
     Accept = "application/json"

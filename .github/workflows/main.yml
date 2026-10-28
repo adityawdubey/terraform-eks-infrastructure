@@ -15,16 +15,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: ${{ vars.TF_VERSION }}
 
@@ -34,6 +34,7 @@ jobs:
           echo 'vpc_name = "${{ vars.VPC_NAME }}"' >> terraform.tfvars
           echo 'cluster_name = "${{ vars.CLUSTER_NAME }}"' >> terraform.tfvars
           echo 'azs = ["${{ vars.AWS_REGION }}a", "${{ vars.AWS_REGION }}b", "${{ vars.AWS_REGION }}c"]' >> terraform.tfvars
+          echo 'cluster_admin_principal_arns = ${{ vars.CLUSTER_ADMIN_PRINCIPAL_ARNS || '[]' }}' >> terraform.tfvars
 
       - name: Terraform Format
         id: fmt

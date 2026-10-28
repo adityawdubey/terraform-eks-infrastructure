@@ -18,3 +18,32 @@ variable "ebs_csi_irsa_role_arn" {
   description = "The ARN of the EBS CSI IRSA role."
 }
 
+variable "kubernetes_version" {
+  type        = string
+  description = "Kubernetes version of the EKS control plane."
+}
+
+variable "node_instance_types" {
+  type        = list(string)
+  description = "Instance types for the managed node group."
+}
+
+variable "node_desired_size" {
+  type        = number
+  description = "Desired number of worker nodes."
+}
+
+variable "node_min_size" {
+  type        = number
+  description = "Minimum number of worker nodes."
+}
+
+variable "node_max_size" {
+  type        = number
+  description = "Maximum number of worker nodes."
+}
+
+variable "cluster_admin_principal_arns" {
+  type        = list(string)
+  description = "IAM principal ARNs granted cluster admin access, in addition to the cluster creator."
+}

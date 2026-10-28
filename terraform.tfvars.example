@@ -10,3 +10,14 @@ azs      = ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
 # EKS
 
 cluster_name = "eks-cluster"
+
+# Optional overrides (defaults shown)
+
+# kubernetes_version  = "1.35"
+# node_instance_types = ["m7i-flex.large"]
+# node_desired_size   = 2
+# node_min_size       = 2
+# node_max_size       = 4
+
+# Extra IAM principals that get cluster admin access (do not include the identity running Terraform)
+# cluster_admin_principal_arns = ["arn:aws:iam::<account-id>:user/<name>"]
