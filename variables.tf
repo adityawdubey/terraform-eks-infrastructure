@@ -23,15 +23,3 @@ variable "cluster_name" {
   type        = string
 }
 
-# IAM
-
-variable "eks_cluster_role" {
-  description = "EKS cluster role"
-  type        = string
-}
-
-variable "eks_node_group_role" {
-  description = "EKS node group role"
-  type        = string
-}
-

@@ -15,8 +15,6 @@ This guide explains how to set up the required secrets and variables for the Ter
 - TF_VERSION
 - VPC_NAME 
 - CLUSTER_NAME 
-- EKS_CLUSTER_ROLE = eks-cluster-role
-- EKS_NODE_GROUP_ROLE = eks-node-group-role
 
 ## Secrets Setup
 

@@ -10,8 +10,3 @@ azs      = ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
 # EKS
 
 cluster_name = "eks-cluster"
-
-# IAM
-
-eks_cluster_role    = "eks-cluster-role"
-eks_node_group_role = "eks-node-group-role"

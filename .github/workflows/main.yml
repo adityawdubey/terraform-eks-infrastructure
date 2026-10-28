@@ -33,9 +33,7 @@ jobs:
           echo 'aws_region = "${{ vars.AWS_REGION }}"' > terraform.tfvars
           echo 'vpc_name = "${{ vars.VPC_NAME }}"' >> terraform.tfvars
           echo 'cluster_name = "${{ vars.CLUSTER_NAME }}"' >> terraform.tfvars
-          echo 'eks_cluster_role = "${{ vars.EKS_CLUSTER_ROLE }}"' >> terraform.tfvars
-          echo 'eks_node_group_role = "${{ vars.EKS_NODE_GROUP_ROLE }}"' >> terraform.tfvars
-          echo 'azs = ["${vars.AWS_REGION}a", "${vars.AWS_REGION}b", "${vars.AWS_REGION}c"]' >> terraform.tfvars
+          echo 'azs = ["${{ vars.AWS_REGION }}a", "${{ vars.AWS_REGION }}b", "${{ vars.AWS_REGION }}c"]' >> terraform.tfvars
 
       - name: Terraform Format
         id: fmt
