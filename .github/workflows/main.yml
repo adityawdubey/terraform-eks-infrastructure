@@ -1,14 +1,14 @@
-name: EKS Infra Dev Deployment
+name: EKS Infra Main Deployment
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main ]
 
 jobs:
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
-    environment: dev
+    environment: main
     permissions:
       id-token: write
       contents: read

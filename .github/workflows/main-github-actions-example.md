@@ -1,12 +1,12 @@
-# GitHub Secrets and Variables (dev Environment)
+# GitHub Secrets and Variables (main Environment)
 
-This guide explains how to set up the required secrets and variables for the Terraform CI/CD workflow in the dev environment.
+This guide explains how to set up the required secrets and variables for the Terraform CI/CD workflow in the main environment.
 
 ## Environment Variables Setup
 
 1. Go to your GitHub repository
 2. Navigate to Settings > Environments
-3. Click on "dev" environment (create it if it doesn't exist)
+3. Click on "main" environment (create it if it doesn't exist)
 4. Click "Add variable" and add the following variables:
 
 ### Required Variables
@@ -20,7 +20,7 @@ This guide explains how to set up the required secrets and variables for the Ter
 
 ## Secrets Setup
 
-1. In the same "dev" environment settings
+1. In the same "main" environment settings
 2. Click "Add secret" and add the following secrets:
 
 ### Required Secrets
@@ -38,9 +38,9 @@ This guide explains how to set up the required secrets and variables for the Ter
 ## Verification
 
 To verify your setup:
-1. Push a change to the dev branch
+1. Push a change to the main branch
 2. Check the Actions tab
-3. Look for the "Terraform CI/CD" workflow
+3. Look for the "EKS Infra Main Deployment" workflow
 4. Verify that the workflow runs successfully
 
 ## Troubleshooting
