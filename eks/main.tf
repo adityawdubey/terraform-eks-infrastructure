@@ -26,10 +26,6 @@ module "eks" {
     aws-ebs-csi-driver = {
       service_account_role_arn = var.ebs_csi_irsa_role_arn
       most_recent              = true
-      # Newer EKS versions ship no default StorageClass; create a gp3 default
-      configuration_values = jsonencode({
-        defaultStorageClass = { enabled = true }
-      })
     }
     eks-pod-identity-agent = {
       most_recent = true
