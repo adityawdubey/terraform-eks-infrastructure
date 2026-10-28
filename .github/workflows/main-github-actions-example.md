@@ -24,7 +24,19 @@ This guide explains how to set up the required secrets and variables for the Ter
 
 ### Required Secrets
 
-- AWS_ROLE_ARN = 
+- AWS_ROLE_ARN = ARN of the IAM role the workflow assumes through GitHub OIDC
+
+The role's trust policy must allow the `main` environment of this repository:
+
+- `token.actions.githubusercontent.com:aud` = `sts.amazonaws.com`
+- `token.actions.githubusercontent.com:sub` = `repo:adityawdubey/terraform-eks-infrastructure:environment:main`
+
+## Environment Protection
+
+Every push to `main` runs `terraform apply`. In the "main" environment settings:
+
+1. Add yourself under "Required reviewers" so each apply waits for approval
+2. Under "Deployment branches and tags", allow only the `main` branch
 
 
 ## Security Notes

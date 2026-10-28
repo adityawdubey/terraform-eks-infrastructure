@@ -86,7 +86,7 @@ cp terraform.tfvars.example terraform.tfvars
 
 Terraform state is stored remotely in S3 with native S3 state locking (`use_lockfile = true` in `backend.tf`). Terraform does not create this bucket, and this repository intentionally does not create it either. Create it **once per AWS account**, before the first `terraform init`.
 
-Use a predictable, globally unique name, for example `<project>-tfstate-<account-id>-<region>`:
+Use a predictable, globally unique name, for example `<project>-tfstate-<account-id>-<region>`. Create the bucket in the same region as the backend in `backend.tf` (`ap-south-1`):
 
 ```bash
 export AWS_REGION=ap-south-1
@@ -114,6 +114,7 @@ The bucket name is not stored in this repository. Pass it to `terraform init` (l
 1. Initialize Terraform with your state bucket:
 
 ```bash
+export TF_STATE_BUCKET=<your-state-bucket-name>
 terraform init -backend-config="bucket=$TF_STATE_BUCKET"
 ```
 
