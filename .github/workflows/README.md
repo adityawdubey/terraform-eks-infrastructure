@@ -17,10 +17,6 @@ This guide explains how to set up the required secrets and variables for the Ter
 - CLUSTER_NAME 
 - TF_STATE_BUCKET = name of the existing Terraform state bucket (see [Create the Terraform state bucket](../../README.md#create-the-terraform-state-bucket-one-time))
 
-### Optional Variables
-
-- CLUSTER_ADMIN_PRINCIPAL_ARNS = HCL list of IAM principal ARNs that get cluster admin access besides the CI role, e.g. `["arn:aws:iam::<account-id>:user/<name>"]`. Without it, only the CI role can use `kubectl` on a cluster created by this workflow.
-
 ## Secrets Setup
 
 1. In the same "main" environment settings

@@ -53,9 +53,3 @@ variable "node_max_size" {
   type        = number
   default     = 4
 }
-
-variable "cluster_admin_principal_arns" {
-  description = "IAM principal ARNs granted cluster admin access in addition to the cluster creator (do not include the creator)"
-  type        = list(string)
-  default     = []
-}

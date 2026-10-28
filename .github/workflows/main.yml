@@ -34,7 +34,6 @@ jobs:
           echo 'vpc_name = "${{ vars.VPC_NAME }}"' >> terraform.tfvars
           echo 'cluster_name = "${{ vars.CLUSTER_NAME }}"' >> terraform.tfvars
           echo 'azs = ["${{ vars.AWS_REGION }}a", "${{ vars.AWS_REGION }}b", "${{ vars.AWS_REGION }}c"]' >> terraform.tfvars
-          echo 'cluster_admin_principal_arns = ${{ vars.CLUSTER_ADMIN_PRINCIPAL_ARNS || '[]' }}' >> terraform.tfvars
 
       - name: Terraform Format
         id: fmt
