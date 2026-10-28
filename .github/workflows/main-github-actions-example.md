@@ -15,6 +15,7 @@ This guide explains how to set up the required secrets and variables for the Ter
 - TF_VERSION
 - VPC_NAME 
 - CLUSTER_NAME 
+- TF_STATE_BUCKET = name of the existing Terraform state bucket (see "Create the Terraform state bucket" in the README)
 
 ## Secrets Setup
 

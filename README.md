@@ -12,6 +12,7 @@ blog: https://adityadubey.tech/deploying-an-amazon-eks-cluster-with-terraform
 - [Setup and Deployment](#setup-and-deployment)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Create the Terraform state bucket (one-time)](#create-the-terraform-state-bucket-one-time)
   - [Deployment](#deployment)
 - [Usage](#usage)
   - [Accessing the Cluster](#accessing-the-cluster)
@@ -81,12 +82,39 @@ cp terraform.tfvars.example terraform.tfvars
     Edit the terraform.tfvars file to tailor the variables to your specific needs.
 
 
-### Deployment
+### Create the Terraform state bucket (one-time)
 
-1. Initialize Terraform:
+Terraform state is stored remotely in S3 with native S3 state locking (`use_lockfile = true` in `backend.tf`). Terraform does not create this bucket, and this repository intentionally does not create it either. Create it **once per AWS account**, before the first `terraform init`.
+
+Use a predictable, globally unique name, for example `<project>-tfstate-<account-id>-<region>`:
 
 ```bash
-terraform init
+export AWS_REGION=ap-south-1
+export TF_STATE_BUCKET="eks-infra-tfstate-$(aws sts get-caller-identity --query Account --output text)-${AWS_REGION}"
+
+aws s3api create-bucket --bucket "$TF_STATE_BUCKET" --region "$AWS_REGION" \
+  --create-bucket-configuration LocationConstraint="$AWS_REGION"
+aws s3api put-bucket-versioning --bucket "$TF_STATE_BUCKET" \
+  --versioning-configuration Status=Enabled
+aws s3api put-bucket-encryption --bucket "$TF_STATE_BUCKET" \
+  --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+aws s3api put-public-access-block --bucket "$TF_STATE_BUCKET" \
+  --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+```
+
+> [!IMPORTANT]
+> - **Do not let this Terraform stack create its own state bucket.** The bucket must exist before `terraform init`, and `terraform destroy` would try to delete the bucket that holds the state it is using.
+> - **Do not let CI create a missing bucket.** A new bucket means an empty state, and Terraform would try to recreate infrastructure that already exists. If the bucket is missing, CI should fail.
+> - **Do not delete the bucket or its versions** while any infrastructure managed by this state still exists.
+
+The bucket name is not stored in this repository. Pass it to `terraform init` (locally) or set the `TF_STATE_BUCKET` GitHub Actions variable (CI).
+
+### Deployment
+
+1. Initialize Terraform with your state bucket:
+
+```bash
+terraform init -backend-config="bucket=$TF_STATE_BUCKET"
 ```
 
 2. Plan the deployment:
