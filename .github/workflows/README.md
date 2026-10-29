@@ -28,18 +28,14 @@ The role's trust policy must allow the `main` environment of this repository:
 - `token.actions.githubusercontent.com:aud` = `sts.amazonaws.com`
 - `token.actions.githubusercontent.com:sub` = `repo:adityawdubey/terraform-eks-infrastructure:environment:main`
 
+The role needs permission to create the stack's VPC, EKS and IAM resources and to read and write the state bucket.
+
 ## Environment Protection
 
 Every push to `main` runs `terraform apply`. In the "main" environment settings:
 
 1. Add yourself under "Required reviewers" so each apply waits for approval
 2. Under "Deployment branches and tags", allow only the `main` branch
-
-
-## Security Notes
-
-- Secrets are encrypted and not visible in logs
-- Keep only credentials in GitHub; commit non-secret settings under `environments/`
 
 ## Verification
 
@@ -49,10 +45,8 @@ To verify your setup:
 3. Look for the "EKS Infra Main Deployment" workflow
 4. Verify that the workflow runs successfully
 
-## Troubleshooting
+A commit message containing `[skip ci]` doesn't trigger a deployment. To pause deployments:
 
-If the workflow fails:
-1. Check that the `AWS_ROLE_ARN` secret is set in the "main" environment
-2. Verify the values in `environments/main/` are correct
-3. Check the workflow logs for specific error messages
-4. Ensure the AWS role has the necessary permissions
+```bash
+gh workflow disable "EKS Infra Main Deployment" -R adityawdubey/terraform-eks-infrastructure
+```

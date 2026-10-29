@@ -14,6 +14,7 @@ blog: https://adityadubey.tech/deploying-an-amazon-eks-cluster-with-terraform
   - [Installation](#installation)
   - [Create the Terraform state bucket (one-time)](#create-the-terraform-state-bucket-one-time)
   - [Deployment](#deployment)
+  - [Destroy](#destroy)
 - [Usage](#usage)
   - [Accessing the Cluster](#accessing-the-cluster)
 - [References](#references)
@@ -32,9 +33,9 @@ The infrastructure follows a resilient, secure, and highly available design span
 
 ## Technologies Used
 
-- **Terraform:** v1.11.3+
+- **Terraform:** 1.17 (CI uses 1.17.1)
 - **AWS ~> 5.0:** EKS, VPC, IAM
-- **Kubernetes:** v2.0+
+- **Amazon EKS:** 1.35
 
 ## Features
 
@@ -44,7 +45,6 @@ The infrastructure follows a resilient, secure, and highly available design span
 - Kubernetes RBAC best practices for secure access control
 - Automated deployment of add-ons with proper IAM permissions
 - Deployed the AWS Load Balancer Controller with full Ingress support
-- Configured DNS + ALB Ingress to expose workloads securely
 - Cluster Autoscaler for automatic scaling of EKS node groups based on pod resource demands
 
 
@@ -58,28 +58,15 @@ The infrastructure follows a resilient, secure, and highly available design span
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository and configure the AWS CLI:
 
 ```bash
-git clone https://github.com/yourusername/terraform-eks-infrastructure.git
+git clone https://github.com/adityawdubey/terraform-eks-infrastructure.git
 cd terraform-eks-infrastructure
-```
-
-2. Configure AWS CLI:
-
-```bash
 aws configure
 ```
 
-3. Create a terraform.tfvars file:
-
-```bash
-cp terraform.tfvars.example terraform.tfvars
-```
-
-5. Customize the variables in **terraform.tfvars**
-
-    Edit the terraform.tfvars file to tailor the variables to your specific needs.
+2. Set your values in `environments/main/terraform.tfvars` (region, VPC and cluster names, availability zones, cluster admins) and your state bucket in `environments/main/backend.s3.tfbackend`.
 
 
 ### Create the Terraform state bucket (one-time)
@@ -107,30 +94,29 @@ aws s3api put-public-access-block --bucket "$TF_STATE_BUCKET" \
 > - **Do not let CI create a missing bucket.** A new bucket means an empty state, and Terraform would try to recreate infrastructure that already exists. If the bucket is missing, CI should fail.
 > - **Do not delete the bucket or its versions** while any infrastructure managed by this state still exists.
 
-Pass the bucket name to `terraform init` when running locally. CI reads it from `environments/main/backend.s3.tfbackend` (see [.github/workflows/README.md](.github/workflows/README.md)).
+Put the bucket name in `environments/main/backend.s3.tfbackend`. Local runs and CI both read it from there.
 
 ### Deployment
 
-1. Initialize Terraform with your state bucket:
+Pushes to `main` deploy automatically through GitHub Actions (setup: [.github/workflows/README.md](.github/workflows/README.md)). To preview or deploy locally with the same settings:
 
 ```bash
-export TF_STATE_BUCKET=<your-state-bucket-name>
-terraform init -backend-config="bucket=$TF_STATE_BUCKET"
+terraform init -backend-config=environments/main/backend.s3.tfbackend
+terraform plan -var-file=environments/main/terraform.tfvars -out=tfplan
+terraform apply tfplan
 ```
 
-2. Plan the deployment:
+> [!NOTE]
+> Apply from either CI or your machine, not both. Terraform gives cluster admin to whoever runs `apply`, so switching between them changes that access each time.
+
+### Destroy
 
 ```bash
-terraform plan
+terraform plan -destroy -var-file=environments/main/terraform.tfvars -out=destroy.tfplan
+terraform apply destroy.tfplan
 ```
 
-3. Apply the configuration:
-
-```bash
-terraform apply
-```
-
-To deploy with GitHub Actions instead, follow the CI/CD setup guide in [.github/workflows/README.md](.github/workflows/README.md).
+The state bucket isn't part of the stack and isn't deleted. Disable the workflow first, otherwise the next push to `main` recreates everything.
 
 
 ## Usage
@@ -138,6 +124,8 @@ To deploy with GitHub Actions instead, follow the CI/CD setup guide in [.github/
 ### Accessing the Cluster
 
 1. Set the AWS CLI profile:
+
+Your IAM identity must be listed in `cluster_admin_principal_arns`; otherwise `kubectl` returns `Unauthorized`.
 
 Run the following command to update your **kubeconfig** file, allowing `kubectl` to communicate with the EKS cluster:
 
